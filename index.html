@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"  name="viewport" />
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet"
+		href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+		crossorigin="anonymous">
+
+	<link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+    <title>server_monitor(alpha)</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<!-- Nav tabs -->
+			<nav class="container navbar navbar-expand-md bg-dark navbar-dark">
+				<!-- Brand -->
+				<a id="context" class="navbar-brand d-block d-md-none" href="#">CPU</a>
+				<!-- Toggler/collapsibe Button -->
+				<button id="toggler-button" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+				    <span class="navbar-toggler-icon"></span>
+				</button>
+				<!-- Navbar links -->
+				<div class="collapse navbar-collapse" id="navbar">
+					<ul class="navbar-nav nav" role="tablist">
+					    <li class="nav-item"> <a onclick="cpu_switch()" class="switch nav-link active" data-toggle="tab" href="#cpu">CPU</a>
+					    </li>
+					    <li class="nav-item"> <a onclick="ram_switch()" class="switch nav-link" data-toggle="tab" href="#ram">RAM</a>
+					    </li>
+					    <li class="nav-item"> <a onclick="disk_switch()" class="switch nav-link" data-toggle="tab" href="#disk">diskIO</a>
+					    </li>
+					    <li class="nav-item"> <a onclick="net_switch()" class="switch nav-link" data-toggle="tab" href="#net">network</a>
+					    </li>
+					</ul>	
+				</div>
+			</nav>
+			<div class="container">
+				<div class="form-inline text-right">
+					<select id="date_picker" class="form-control"></select>
+				</div>
+			</div>
+			<!-- Tab panes -->
+			<div class="container tab-content">
+			    <div id="cpu" class="container tab-pane chart-pane active show">
+			        <br>
+					<div id="container1" class="col-12"></div>
+			    </div>
+			    <div id="ram" class="container tab-pane chart-pane">
+			        <br>
+					<div id="container2" class="col-12"></div>
+			    </div>
+			    <div id="disk" class="container tab-pane chart-pane">
+			        <br>
+					<div id="container3" class="col-12"></div>
+			    </div>
+			    <div id="net" class="container tab-pane chart-pane">
+			        <br>
+					<div id="container4" class="col-12"></div>
+			    </div>
+			</div>
+		</div>
+
+	</div>
+	
+	<script
+		src="http://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/oldie.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/no-data-to-display.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    <script src="loadChart.js"></script>
+    <script src="DateFormatter.js"></script>
+    <script type="text/javascript">
+	var date;
+	$(function(){
+		var d = new Date();
+		d.setTime(d.getTime()-SECOND_PER_DAY);
+		date = d.Format("yyyyMMdd");
+		for (var i = 0; i < 30; i++) {
+			$("#date_picker").append("<option value='"+d.Format("yyyyMMdd")+"'>"+d.Format("yyyy-MM-dd")+"</option>");
+			d.setTime(d.getTime()-SECOND_PER_DAY);
+		}
+		$("#date_picker").change(function(){
+			date = $(this).val();
+			$(".switch.active").click();
+		});
+		$(".switch").click(function(){
+			$("#context").text($(this).text());
+			$("#navbar").removeClass("show");
+		});
+		cpu_switch();
+	});
+	function cpu_switch(){
+    	Loader.loadChart('container1','server_log/u_'+date+'.log',{
+    		title : 'CPU',
+			firstColumn : 3,
+			nameRow : 1,
+			redundantRow : 2,
+			showColumns : ["%user"]
+    	});
+	}
+	function ram_switch(){
+    	Loader.loadChart('container2','server_log/r_'+date+'.log',{
+    		title : 'RAM',
+			firstColumn : 2,
+			nameRow : 1,
+			redundantRow : 2,
+			showColumns : ["%memused"]
+    	});
+	}
+	function disk_switch(){
+    	Loader.loadChart('container3','server_log/d_'+date+'.log',{
+    		title : 'diskIO',
+			firstColumn : 3,
+			nameRow : 1,
+			redundantRow : 5,
+			showColumns : ["%util"],
+			rowFilter : {
+				index : 2,
+				value : "dev8-0"
+			}
+    	});
+	}
+	function net_switch(){
+    	Loader.loadChart('container4','server_log/n_'+date+'.log',{
+    		title : 'network',
+			firstColumn : 3,
+			nameRow : 1,
+			redundantRow : 4,
+			showColumns : ["rxkB/s","txkB/s"],
+			rowFilter : {
+				index : 2,
+				value : "Auto_em1"
+			}
+    	});	
+	}
+    </script>
+</body>
+</html>
