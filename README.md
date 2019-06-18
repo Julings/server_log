@@ -14,6 +14,10 @@ My English is so poor. Hope someone can help me find a better translation. Thx.
 We often used linux `sar` to show our server running status,
 The project is used to show the `sar` log in the way of charts automatically.
 
+2019-06-18
+
+Fixed bugs.
+I try to use linux `crond` to do the task periodically.
 
 
 If you are interested in this, please contact me.

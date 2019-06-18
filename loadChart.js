@@ -45,7 +45,7 @@ class Loader{
 					panKey: 'shift'
 				},
 				credits:{
-				    enabled: false // 禁用版权信息
+				    enabled: false
 				},
 				title: {
 					text: data.title
@@ -97,7 +97,6 @@ class Loader{
 	    		chart.legend.update({
 					enabled: false
 				});
-				console.log(111);
 				chart.hideNoData();
 				chart.showNoData();
 	    	}
