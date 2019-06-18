@@ -1,5 +1,5 @@
-project_path = YOUR_PORJECT_PATH
-sa_log_path = YOUR_SA_LOG_PATH 
+project_path=YOUR_PORJECT_PATH
+sa_log_path=YOUR_SA_LOG_PATH 
 #sa_log_path=/var/log/sa/
 
 cd ${project_path}
